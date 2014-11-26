@@ -38,14 +38,12 @@
                 </select>
               </label>
               <input type="submit" value="Search"/>
-            </fourm>
+            </form>
           </div>
         </div>
 
-
         <% @movies_and_id.each do |movie| %>
           <li><a href= 'movies/<%= movie['id'] %>'><%= movie['title']%></a> debuted in <%= movie['year'] %> in the genre of <%= movie['genre'] %>
-
           </li>
         <% end %>
       </ul>
