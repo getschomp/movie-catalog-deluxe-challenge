@@ -49,17 +49,45 @@ get '/actors/:id' do
 end
 
 get '/movies' do
+  #create a form to get ordering input
+  @order = params[:ordertype]
 
-  db_connection do |conn|
-    @movies_and_id = conn.exec_params('SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
-      FROM movies JOIN genres ON movies.genre_id = genres.id
-      JOIN studios ON movies.studio_id = studios.id
-      ORDER BY movies.title')
-  end
+
+
   # will show a table of movies, sorted alphabetically by title.
   # The table includes the movie title,
   # the year it was released, the rating, the genre, and the studio that produced it.
   # Each movie title is a link to the details page for that movie.
+
+
+  @sort_order = params[:order]
+  if @sort_order == 'year'
+    @movie_sorted_sql ='SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
+    FROM movies JOIN genres ON movies.genre_id = genres.id
+    JOIN studios ON movies.studio_id = studios.id
+    ORDER BY year'
+  elsif @sort_order == 'rating'
+    @movie_sorted_sql = 'SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio,
+    genres.name AS genre, movies.rating AS rating
+    FROM movies JOIN genres ON movies.genre_id = genres.id
+    JOIN studios ON movies.studio_id = studios.id
+    ORDER BY rating'
+  elsif @sort_order.nil? || @sort_order == 'title'
+    @movie_sorted_sql = 'SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
+    FROM movies JOIN genres ON movies.genre_id = genres.id
+    JOIN studios ON movies.studio_id = studios.id
+    ORDER BY title'
+  end
+
+  db_connection do |conn|
+    @movies_and_id = conn.exec_params(@movie_sorted_sql)
+  end
+
+  # Allow different orderings for the `/movies` page. The user should be able to sort by year released or rating by visiting
+  #`/movies?order=year` or `/movies?order=rating`.
+
+
+
   erb :'movies/index'
 end
 
@@ -82,31 +110,4 @@ get '/movies/:id' do
   end
 
   erb :'movies/show'
-end
-
-get '/movies?' do
-
-
-
-  @order = params[:ordertype]
-
-  if @order == 'title'
-    @query ='SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
-    FROM movies JOIN genres ON movies.genre_id = genres.id
-    JOIN studios ON movies.studio_id = studios.id
-    ORDER BY movies.title'
-  elsif @order == 'rating'
-    @query = 'SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre, movies.rating AS rating
-    FROM movies JOIN genres ON movies.genre_id = genres.id
-    JOIN studios ON movies.studio_id = studios.id
-    ORDER BY movies.rating'
-  end
-
-  db_connection do |conn|
-    @movies_info_by_year = conn.exec_params(@query)
-  end
-
-
-  # Allow different orderings for the `/movies` page. The user should be able to sort by year released or rating by visiting `/movies?order=year` or `/movies?order=rating`.
-
 end
