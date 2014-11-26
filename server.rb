@@ -1,6 +1,7 @@
 # Allison Browne and Patrick Kennedy
 # Movie-catalog-deluxe challenge
 # 11/25/14
+# Search feature completed
 
 require 'pg'
 require 'sinatra'
@@ -80,5 +81,32 @@ get '/movies/:id' do
     # as well as a list of all of the actors and their roles. Each actor name is a link to the details page for that actor.
   end
 
-erb :'movies/show'
+  erb :'movies/show'
+end
+
+get '/movies?' do
+
+
+
+  @order = params[:ordertype]
+
+  if @order == 'title'
+    @query ='SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
+    FROM movies JOIN genres ON movies.genre_id = genres.id
+    JOIN studios ON movies.studio_id = studios.id
+    ORDER BY movies.title'
+  elsif @order == 'rating'
+    @query = 'SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre, movies.rating AS rating
+    FROM movies JOIN genres ON movies.genre_id = genres.id
+    JOIN studios ON movies.studio_id = studios.id
+    ORDER BY movies.rating'
+  end
+
+  db_connection do |conn|
+    @movies_info_by_year = conn.exec_params(@query)
+  end
+
+
+  # Allow different orderings for the `/movies` page. The user should be able to sort by year released or rating by visiting `/movies?order=year` or `/movies?order=rating`.
+
 end
