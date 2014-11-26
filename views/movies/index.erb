@@ -28,14 +28,19 @@
           <input type="submit" value="Search"/>
         </form>
          -->
-        <form action="/movies?" method="get">
-          <label for="query">Search:</label>
-          <select name="order">
-
-            <option value="year"> Year </option>
-            <option value="rating"> Rating </option>
-            <input type="submit" value="Search"/>
-          </select>
+         <div class="row">
+           <div class="large-12 columns">
+            <form action="/movies?" method="get">
+              <label for="sort">Select Sorting</label>
+                <select name="order">
+                  <option value="year"> Year </option>
+                  <option value="rating"> Rating </option>
+                </select>
+              </label>
+              <input type="submit" value="Search"/>
+            </fourm>
+          </div>
+        </div>
 
 
         <% @movies_and_id.each do |movie| %>
