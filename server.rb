@@ -54,12 +54,6 @@ get '/movies' do
 
 
 
-  db_connection do |conn|
-    @movies_and_id = conn.exec_params('SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
-      FROM movies JOIN genres ON movies.genre_id = genres.id
-      JOIN studios ON movies.studio_id = studios.id
-      ORDER BY movies.title')
-  end
   # will show a table of movies, sorted alphabetically by title.
   # The table includes the movie title,
   # the year it was released, the rating, the genre, and the studio that produced it.
@@ -78,8 +72,12 @@ get '/movies' do
     FROM movies JOIN genres ON movies.genre_id = genres.id
     JOIN studios ON movies.studio_id = studios.id
     ORDER BY rating'
+  elsif @sort_order.nil? || @sort_order == 'title'
+    @movie_sorted_sql = 'SELECT movies.id AS id, movies.title AS title, movies.year AS year, studios.name AS studio, genres.name AS genre
+    FROM movies JOIN genres ON movies.genre_id = genres.id
+    JOIN studios ON movies.studio_id = studios.id
+    ORDER BY title'
   end
-
 
   db_connection do |conn|
     @movies_and_id = conn.exec_params(@movie_sorted_sql)
