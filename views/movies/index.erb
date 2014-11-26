@@ -16,20 +16,36 @@
 
 </head>
 
-<div class="container">
-  <body>
-    <ul>
 
-      <h1>Movie</h1>
+  <div class="container">
+    <body>
+      <ul>
 
-      <% @movies_and_id.each do |movie| %>
-        <li><a href= 'movies/<%= movie['id'] %>'><%= movie['title']%></a> debuted in <%= movie['year'] %> in the genre of <%= movie['genre'] %>
+        <h1>Movies</h1>
+        <!-- <form action="/movies?" method="get">
+          <label for="query">Search: </label>
+          <input type="text" name="query" id="query" value="<%= @search %>"/>
+          <input type="submit" value="Search"/>
+        </form>
+         -->
+        <form action="/movies?" method="get">
+          <label for="query">Search:</label>
+          <select name="order">
 
-        </li>
-      <% end %>
-    </ul>
-  </body>
-</div>
+            <option value="year"> Year </option>
+            <option value="rating"> Rating </option>
+            <input type="submit" value="Search"/>
+          </select>
+
+
+        <% @movies_and_id.each do |movie| %>
+          <li><a href= 'movies/<%= movie['id'] %>'><%= movie['title']%></a> debuted in <%= movie['year'] %> in the genre of <%= movie['genre'] %>
+
+          </li>
+        <% end %>
+      </ul>
+    </body>
+  </div>
 
 </html>
 
